@@ -1,0 +1,8 @@
+**/.DS_Store
+netflix-auth/.idea
+netflix-auth/.database
+netflix-auth/logs
+
+netflix-movies/.idea
+netflix-movies/.env
+netflix-movies/logs

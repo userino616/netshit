@@ -66,36 +66,122 @@
 		{
 			"name": "my bookmarks",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzU0NDYzMDYsImp0aSI6ImQwNzlmZTJmLWRlNmQtNDQ2NS05NDlmLWRhN2M4OGFlNDIzNSIsImlhdCI6MTYzNTQxMDMwNiwidXNlcklkIjoiMTE5MWY5ZGEtM2U2Zi00ZDZkLWJkMmMtNjMzMjFjMDYwMzEyIn0.ThygXWpBqhrZJvW11VWO4Hk9dnzRZSDhwBbmoAZswi4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/users/bookmarks",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"users",
+						"bookmarks"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "my watched list",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzU0NDYzMDYsImp0aSI6ImQwNzlmZTJmLWRlNmQtNDQ2NS05NDlmLWRhN2M4OGFlNDIzNSIsImlhdCI6MTYzNTQxMDMwNiwidXNlcklkIjoiMTE5MWY5ZGEtM2U2Zi00ZDZkLWJkMmMtNjMzMjFjMDYwMzEyIn0.ThygXWpBqhrZJvW11VWO4Hk9dnzRZSDhwBbmoAZswi4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/users/watched",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"users",
+						"watched"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "add to watched list",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzU0NDYzMDYsImp0aSI6ImQwNzlmZTJmLWRlNmQtNDQ2NS05NDlmLWRhN2M4OGFlNDIzNSIsImlhdCI6MTYzNTQxMDMwNiwidXNlcklkIjoiMTE5MWY5ZGEtM2U2Zi00ZDZkLWJkMmMtNjMzMjFjMDYwMzEyIn0.ThygXWpBqhrZJvW11VWO4Hk9dnzRZSDhwBbmoAZswi4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/movies/a1fc3081-5339-486c-972c-8cc4daafd7dd/add-to-watch-list",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"movies",
+						"a1fc3081-5339-486c-972c-8cc4daafd7dd",
+						"add-to-watch-list"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "add to bookrmarks",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzU0NDYzMDYsImp0aSI6ImQwNzlmZTJmLWRlNmQtNDQ2NS05NDlmLWRhN2M4OGFlNDIzNSIsImlhdCI6MTYzNTQxMDMwNiwidXNlcklkIjoiMTE5MWY5ZGEtM2U2Zi00ZDZkLWJkMmMtNjMzMjFjMDYwMzEyIn0.ThygXWpBqhrZJvW11VWO4Hk9dnzRZSDhwBbmoAZswi4",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/movies/a1fc3081-5339-486c-972c-8cc4daafd7dd/add-bookmark",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"movies",
+						"a1fc3081-5339-486c-972c-8cc4daafd7dd",
+						"add-bookmark"
+					]
+				}
 			},
 			"response": []
 		},
@@ -104,16 +190,49 @@
 			"request": {
 				"method": "GET",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/movies/search/1",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"movies",
+						"search",
+						"1"
+					]
+				}
 			},
 			"response": []
 		},
 		{
 			"name": "logout",
 			"request": {
-				"method": "GET",
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MzU0NDYzMDYsImp0aSI6ImQwNzlmZTJmLWRlNmQtNDQ2NS05NDlmLWRhN2M4OGFlNDIzNSIsImlhdCI6MTYzNTQxMDMwNiwidXNlcklkIjoiMTE5MWY5ZGEtM2U2Zi00ZDZkLWJkMmMtNjMzMjFjMDYwMzEyIn0.ThygXWpBqhrZJvW11VWO4Hk9dnzRZSDhwBbmoAZswi4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
 				"header": [],
-				"url": null
+				"url": {
+					"raw": "localhost:8000/v1/users/logout",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"users",
+						"logout"
+					]
+				}
 			},
 			"response": []
 		}

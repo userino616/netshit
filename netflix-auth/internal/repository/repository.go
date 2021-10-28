@@ -1,9 +1,10 @@
 package repository
 
 import (
+	"netflix-auth/internal/repository/users"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/go-redis/redis/v8"
-	"netflix-auth/internal/repository/users"
 )
 
 type Repository struct {
@@ -13,7 +14,7 @@ type Repository struct {
 
 func New(db *pg.DB, rc *redis.Client) *Repository {
 	return &Repository{
-		User: users.NewUserRepository(db),
+		User:     users.NewUserRepository(db),
 		MemStore: NewMemoryStorage(rc),
 	}
 }

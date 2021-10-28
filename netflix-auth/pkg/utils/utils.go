@@ -72,4 +72,3 @@ func GetTokenClaims(r *http.Request) (*jwt.TokenClaims, httperror.HTTPError) {
 
 	return claims, nil
 }
-

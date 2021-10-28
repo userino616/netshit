@@ -1,9 +1,10 @@
 package redis
 
 import (
-	"github.com/go-redis/redis/v8"
 	"netflix-auth/internal/config"
 	"sync"
+
+	"github.com/go-redis/redis/v8"
 )
 
 var (
@@ -14,9 +15,9 @@ var (
 func Load(cfg *config.Config) {
 	once.Do(func() {
 		dbOptions := &redis.Options{
-			Addr:               cfg.Redis.Addr,
-			Password:           cfg.Redis.Password,
-			DB:                 0,
+			Addr:     cfg.Redis.Addr,
+			Password: cfg.Redis.Password,
+			DB:       0,
 		}
 		db = redis.NewClient(dbOptions)
 	})

@@ -2,10 +2,10 @@ package postgres
 
 import (
 	"context"
+	"netflix-auth/internal/config"
 	"sync"
 
 	"github.com/go-pg/pg/v10"
-	"netflix-auth/internal/config"
 )
 
 var (

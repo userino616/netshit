@@ -2,13 +2,14 @@ package controller
 
 import (
 	"context"
+	"netflix-movies/internal/models"
+	"netflix-movies/internal/services/movies"
+	"netflix-movies/pkg/postgres"
+
 	"github.com/google/uuid"
 	"github.com/userino616/netflix-grpc/movieservice"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"netflix-movies/internal/models"
-	"netflix-movies/internal/services/movies"
-	"netflix-movies/pkg/postgres"
 )
 
 type MovieController struct {

@@ -19,7 +19,7 @@ type TokenClaims struct {
 func newTokenClaims(userID uuid.UUID, tokenExp time.Duration) *TokenClaims {
 	return &TokenClaims{
 		jwt.StandardClaims{
-			Id: uuid.New().String(),
+			Id:        uuid.New().String(),
 			ExpiresAt: time.Now().Add(tokenExp).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},

@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"net/http"
-
 	"netflix-auth/internal/config"
 	"netflix-auth/pkg/logger"
 )

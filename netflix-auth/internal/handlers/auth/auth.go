@@ -2,7 +2,6 @@ package auth
 
 import (
 	"net/http"
-
 	"netflix-auth/internal/models"
 	"netflix-auth/internal/services/auth"
 	"netflix-auth/pkg/response"

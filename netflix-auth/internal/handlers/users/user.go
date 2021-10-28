@@ -2,7 +2,6 @@ package users
 
 import (
 	"net/http"
-
 	"netflix-auth/internal/models"
 	"netflix-auth/internal/services/users"
 	"netflix-auth/pkg/response"

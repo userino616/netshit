@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
 	"netflix-movies/internal/config"
 	"netflix-movies/internal/controller"
 	"netflix-movies/internal/repository"
@@ -9,6 +8,8 @@ import (
 	"netflix-movies/internal/services"
 	"netflix-movies/pkg/logger"
 	"netflix-movies/pkg/postgres"
+
+	"github.com/joho/godotenv"
 
 	"github.com/userino616/netflix-grpc/movieservice"
 	"google.golang.org/grpc"
@@ -24,7 +25,6 @@ func main() {
 	l.Info("logger initialized")
 
 	l.Debugf("config data: %v", cfg)
-
 
 	postgres.Load(cfg)
 	db := postgres.GetDB()

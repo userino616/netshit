@@ -1,8 +1,9 @@
 package config
 
 import (
-	"github.com/sirupsen/logrus"
 	"sync"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/ilyakaznacheev/cleanenv"
 )

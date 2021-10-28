@@ -1,13 +1,14 @@
 package jwt
 
 import (
+	"netflix-auth/internal/config"
 	"netflix-auth/internal/repository"
 	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/google/uuid"
-	"netflix-auth/internal/config"
+
 	httperror "netflix-auth/pkg/http_error"
 )
 

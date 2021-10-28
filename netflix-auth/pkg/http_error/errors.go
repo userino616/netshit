@@ -3,7 +3,6 @@ package httperror
 import (
 	"errors"
 	"net/http"
-
 	"netflix-auth/pkg/logger"
 )
 

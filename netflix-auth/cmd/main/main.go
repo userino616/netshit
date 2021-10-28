@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"netflix-auth/internal/config"
+	"netflix-auth/internal/handlers"
+	"netflix-auth/internal/repository"
+	"netflix-auth/internal/server"
+	"netflix-auth/pkg/logger"
+	"netflix-auth/pkg/postgres"
 	"netflix-auth/pkg/redis"
 	"os"
 	"os/signal"
@@ -9,12 +15,6 @@ import (
 
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
-	"netflix-auth/internal/config"
-	"netflix-auth/internal/handlers"
-	"netflix-auth/internal/repository"
-	"netflix-auth/internal/server"
-	"netflix-auth/pkg/logger"
-	"netflix-auth/pkg/postgres"
 )
 
 func main() {

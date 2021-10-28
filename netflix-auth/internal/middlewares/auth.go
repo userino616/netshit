@@ -3,12 +3,13 @@ package middlewares
 import (
 	"context"
 	"net/http"
-
-	authentication "netflix-auth/internal/services/auth"
 	"netflix-auth/internal/services/users"
-	httperror "netflix-auth/pkg/http_error"
 	"netflix-auth/pkg/jwt"
 	"netflix-auth/pkg/response"
+
+	authentication "netflix-auth/internal/services/auth"
+
+	httperror "netflix-auth/pkg/http_error"
 )
 
 type Auth struct {
@@ -64,7 +65,6 @@ func (a Auth) WithUserID(next http.Handler) http.Handler {
 		next.ServeHTTP(w, updatedRequest)
 	})
 }
-
 
 func (a Auth) WithTokenClaims(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

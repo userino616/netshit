@@ -6,9 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	e       *logrus.Entry
-)
+var e *logrus.Entry
 
 type Logger struct {
 	*logrus.Entry

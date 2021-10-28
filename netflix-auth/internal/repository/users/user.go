@@ -1,9 +1,10 @@
 package users
 
 import (
+	"netflix-auth/internal/models"
+
 	"github.com/go-pg/pg/v10"
 	"github.com/google/uuid"
-	"netflix-auth/internal/models"
 )
 
 type UserRepository interface {

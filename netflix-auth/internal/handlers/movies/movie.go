@@ -2,12 +2,12 @@ package movies
 
 import (
 	"net/http"
-
-	"github.com/gorilla/mux"
-	"github.com/userino616/netflix-grpc/movieservice"
 	"netflix-auth/internal/services/movies"
 	"netflix-auth/pkg/response"
 	"netflix-auth/pkg/utils"
+
+	"github.com/gorilla/mux"
+	"github.com/userino616/netflix-grpc/movieservice"
 )
 
 type Handler struct {

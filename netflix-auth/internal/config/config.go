@@ -3,7 +3,6 @@ package config
 import (
 	"sync"
 
-
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/sirupsen/logrus"
 )

@@ -3,12 +3,13 @@ package fixtures
 import (
 	"database/sql"
 	"fmt"
-	"github.com/go-pg/pg/v10"
-	"github.com/go-testfixtures/testfixtures/v3"
-	_ "github.com/lib/pq"
 	"netflix-auth/pkg/postgres"
 	"path/filepath"
 	"runtime"
+
+	"github.com/go-pg/pg/v10"
+	"github.com/go-testfixtures/testfixtures/v3"
+	_ "github.com/lib/pq"
 )
 
 var (

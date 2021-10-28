@@ -3,10 +3,8 @@ package hash
 import (
 	"crypto/sha256"
 	"fmt"
-
 	"netflix-auth/internal/config"
 )
-
 
 type Service interface {
 	IsEqual(userPassword, password string) bool

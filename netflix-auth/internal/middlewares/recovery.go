@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"net/http"
+	"netflix-auth/pkg/logger"
 
 	httperror "netflix-auth/pkg/http_error"
-	"netflix-auth/pkg/logger"
 )
 
 func PanicRecoveryMiddleware(next http.Handler) http.Handler {

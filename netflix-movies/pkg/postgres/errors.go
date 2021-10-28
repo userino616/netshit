@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	DuplicateErrorCode = "23505" // не нашел я такой ошибки в пакете pg
+	DuplicateErrorCode     = "23505" // не нашел я такой ошибки в пакете pg
 	ViolatesForeignKeyCode = "23503"
 )
 

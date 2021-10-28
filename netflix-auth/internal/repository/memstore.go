@@ -4,8 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 const BlackListTag = "blackList"
@@ -24,15 +25,14 @@ func NewMemoryStorage(client *redis.Client) MemStore {
 }
 
 func (r redisRepository) BlackListJWT(tokenID string, exp time.Duration) error {
-	key :=  fmt.Sprintf("%s:%s", BlackListTag, tokenID)
+	key := fmt.Sprintf("%s:%s", BlackListTag, tokenID)
 	err := r.Set(context.Background(), key, 0, exp).Err()
 
 	return err
 }
 
-
 func (r redisRepository) IsJWTBlacklisted(tokenID string) (bool, error) {
-	key :=  fmt.Sprintf("%s:%s", BlackListTag, tokenID)
+	key := fmt.Sprintf("%s:%s", BlackListTag, tokenID)
 	_, err := r.Get(context.Background(), key).Result()
 	if errors.Is(err, redis.Nil) {
 		return false, nil

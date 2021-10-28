@@ -2,6 +2,7 @@ package movies
 
 import (
 	"context"
+	"netflix-auth/internal/config"
 	"time"
 
 	"github.com/google/uuid"
@@ -9,7 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"netflix-auth/internal/config"
+
 	httperror "netflix-auth/pkg/http_error"
 )
 

@@ -2,20 +2,21 @@ package handlers
 
 import (
 	"net/http"
-
-	"github.com/justinas/alice"
-	"google.golang.org/grpc"
 	"netflix-auth/internal/config"
 	"netflix-auth/internal/handlers/auth"
 	"netflix-auth/internal/handlers/movies"
 	"netflix-auth/internal/handlers/users"
 	"netflix-auth/internal/middlewares"
 	"netflix-auth/internal/repository"
+	"netflix-auth/pkg/hash"
+	"netflix-auth/pkg/jwt"
+
+	"github.com/justinas/alice"
+	"google.golang.org/grpc"
+
 	authService "netflix-auth/internal/services/auth"
 	moviesService "netflix-auth/internal/services/movies"
 	userService "netflix-auth/internal/services/users"
-	"netflix-auth/pkg/hash"
-	"netflix-auth/pkg/jwt"
 )
 
 const version1 = "/v1"
@@ -57,8 +58,8 @@ func (h *Handler) InitRoutes() *router {
 		authChain                = pubChain.Append(authMiddleware.WithUserID)
 		authChainWithTokenClaims = pubChain.Append(authMiddleware.WithTokenClaims)
 
-		usersRouter              = v1.subRouter("/users")
-		moviesRouter             = v1.subRouter("/movies")
+		usersRouter  = v1.subRouter("/users")
+		moviesRouter = v1.subRouter("/movies")
 	)
 
 	usersRouter.chain(pubChain).handle("/create", h.user.Create, http.MethodPost)

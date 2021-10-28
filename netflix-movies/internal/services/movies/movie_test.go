@@ -31,15 +31,14 @@ var (
 	}
 )
 
-// Если запускать тесты по отдельность то сначала вызывается инит и база приводится в ожидаемый вид
-// Если запускать тесты разом то тест AddToWatchList записывает в бд новую запись и тогда тест GetWatchedList падает
 func init() {
-	fixtures.PrepareFixtures()
 	r = repository.NewMovieRepository(fixtures.GetDB())
 	s = NewMovieService(r)
 }
 
 func TestMovieService_AddToBookmark(t *testing.T) {
+	fixtures.PrepareFixtures()
+
 	tableCases := []struct {
 		testName  string
 		bookmark  *models.UserMovieBookmark
@@ -61,14 +60,6 @@ func TestMovieService_AddToBookmark(t *testing.T) {
 			},
 			pgCodeErr: postgres.ViolatesForeignKeyCode,
 		},
-		{
-			testName: "user doesn't exists",
-			bookmark: &models.UserMovieBookmark{
-				UserID:  uuid.New(),
-				MovieID: firstMovieID,
-			},
-			pgCodeErr: postgres.ViolatesForeignKeyCode,
-		},
 	}
 	for _, tc := range tableCases {
 		err := s.AddToBookmark(tc.bookmark)
@@ -77,6 +68,8 @@ func TestMovieService_AddToBookmark(t *testing.T) {
 }
 
 func TestMovieService_AddToWatchedList(t *testing.T) {
+	fixtures.PrepareFixtures()
+
 	tableCases := []struct {
 		testName  string
 		watched   *models.UserMovieWatched
@@ -98,14 +91,6 @@ func TestMovieService_AddToWatchedList(t *testing.T) {
 			},
 			pgCodeErr: postgres.ViolatesForeignKeyCode,
 		},
-		{
-			testName: "user doesn't exists",
-			watched: &models.UserMovieWatched{
-				UserID:  uuid.New(),
-				MovieID: firstMovieID,
-			},
-			pgCodeErr: postgres.ViolatesForeignKeyCode,
-		},
 	}
 	for _, tc := range tableCases {
 		err := s.AddToWatchedList(tc.watched)
@@ -114,6 +99,8 @@ func TestMovieService_AddToWatchedList(t *testing.T) {
 }
 
 func TestMovieService_GetBookmarks(t *testing.T) {
+	fixtures.PrepareFixtures()
+
 	bookmarks, err := s.GetBookmarks(existsUserID)
 	expectedBookmarks := models.Movies{
 		movie1,
@@ -123,6 +110,8 @@ func TestMovieService_GetBookmarks(t *testing.T) {
 }
 
 func TestMovieService_GetWatchedList(t *testing.T) {
+	fixtures.PrepareFixtures()
+
 	watchedList, err := s.GetWatchedList(existsUserID)
 	expectedWatchedList := models.Movies{
 		movie1,
@@ -132,6 +121,8 @@ func TestMovieService_GetWatchedList(t *testing.T) {
 }
 
 func TestMovieService_Search(t *testing.T) {
+	fixtures.PrepareFixtures()
+
 	tableCases := []struct {
 		searchName string
 		expected   models.Movies

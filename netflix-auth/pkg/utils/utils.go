@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"netflix-auth/pkg/jwt"
 
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
@@ -61,3 +62,14 @@ func GetUserID(r *http.Request) (id uuid.UUID, err httperror.HTTPError) {
 
 	return
 }
+
+func GetTokenClaims(r *http.Request) (*jwt.TokenClaims, httperror.HTTPError) {
+	val := r.Context().Value(authentication.TokenClaimsKey)
+	claims, ok := val.(*jwt.TokenClaims)
+	if !ok {
+		return nil, httperror.NewInternalServerErr(jwt.ErrTokenWrongType)
+	}
+
+	return claims, nil
+}
+

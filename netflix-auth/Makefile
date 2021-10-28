@@ -1,6 +1,7 @@
-APP_NAME := "netflix-auth"
-DB_CONTAINER_NAME := "netflix_postgres"
-DB_NAME := "netflix"
+APP_NAME := "proxy_server"
+DB_CONTAINER_NAME := "netflix_users_postgres"
+DB_NAME := "netflix_users"
+TEST_DB_NAME := "netflix_test"
 
 all: dc-build dc-up
 
@@ -14,16 +15,13 @@ build:
 	go build -o ./bin/main ./cmd/main
 
 dc-build:
-	docker-compose build proxy_server
+	docker-compose build ${APP_NAME}
 
 dc-up:
 	docker-compose up -d
 
 dc-stop:
 	docker-compose stop
-
-create-migrations:
-	migrate create -ext sql -dir sql/migrations -seq init_schema
 
 create-db:
 	docker exec -it ${DB_CONTAINER_NAME} createdb --username=postgres --owner=postgres ${DB_NAME}
@@ -41,13 +39,16 @@ fmt:
 	gofumpt -l -w .
 
 create-db-test:
-	docker exec -it netflix_postgres createdb --username=postgres --owner=postgres netflix_test
+	docker exec -it {DB_CONTAINER_NAME} createdb --username=postgres --owner=postgres netflix_test
 
 up-db-test: create-db-test
 	migrate -path sql/migrations -database "postgresql://postgres:qwerty@localhost:5432/netflix_test?sslmode=disable" -verbose up
 
 drop-db-test:
-	docker exec -it netflix_postgres dropdb --username=postgres netflix_test
+	docker exec -it {DB_CONTAINER_NAME} dropdb --username=postgres {TEST_DB_NAME}
 
 test: up-db-test
 	go test -race -v ./internal/... && make drop-db-test
+
+run:
+	go run ./cmd/main

@@ -1,7 +1,8 @@
-package utils
+package middlewares
 
 import (
 	"net/http"
+
 	httperror "netflix-auth/pkg/http_error"
 	"netflix-auth/pkg/logger"
 )

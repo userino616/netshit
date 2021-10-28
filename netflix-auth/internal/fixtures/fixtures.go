@@ -3,22 +3,19 @@ package fixtures
 import (
 	"database/sql"
 	"fmt"
-	"netflix-auth/pkg/postgres"
-	"path/filepath"
-	"runtime"
-	"sync"
-
 	"github.com/go-pg/pg/v10"
 	"github.com/go-testfixtures/testfixtures/v3"
 	_ "github.com/lib/pq"
+	"netflix-auth/pkg/postgres"
+	"path/filepath"
+	"runtime"
 )
 
 var (
-	p           *pg.DB
-	db          *sql.DB
-	fixtures    *testfixtures.Loader
-	err         error
-	onceFixture sync.Once
+	p        *pg.DB
+	db       *sql.DB
+	fixtures *testfixtures.Loader
+	err      error
 )
 
 func init() {
@@ -50,9 +47,7 @@ func GetDB() *pg.DB {
 }
 
 func PrepareFixtures() {
-	onceFixture.Do(func() {
-		if err := fixtures.Load(); err != nil {
-			panic(err)
-		}
-	})
+	if err := fixtures.Load(); err != nil {
+		panic(err)
+	}
 }

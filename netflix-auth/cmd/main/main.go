@@ -2,34 +2,39 @@ package main
 
 import (
 	"context"
-	"netflix-auth/internal/config"
-	"netflix-auth/internal/handlers"
-	"netflix-auth/internal/repository"
-	"netflix-auth/internal/server"
-	"netflix-auth/internal/services"
-	"netflix-auth/pkg/logger"
-	"netflix-auth/pkg/postgres"
+	"netflix-auth/pkg/redis"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
+	"netflix-auth/internal/config"
+	"netflix-auth/internal/handlers"
+	"netflix-auth/internal/repository"
+	"netflix-auth/internal/server"
+	"netflix-auth/pkg/logger"
+	"netflix-auth/pkg/postgres"
 )
 
 func main() {
-	logger.Init()
+	// норм ли оставлять чтение env файла, потому что на локалке его нужно читать, а в докере нет ?
+	godotenv.Load()
+	cfg := config.GetConfig()
+
+	logger.Init(cfg.LogLvl)
 	l := logger.GetLogger()
-	defer logger.Close()
 	l.Info("logger initialized")
 
-	cfg := config.GetConfig()
-	l.Info("config initialized")
 	l.Debugf("config data: %v", cfg)
 
 	postgres.Load(cfg)
-	db := postgres.GetDB()
-	defer db.Close()
+	defer postgres.Close()
 	l.Info("db initialized")
+
+	redis.Load(cfg)
+	defer redis.Close()
+	l.Info("redis initialized")
 
 	grpcConn, err := grpc.Dial(cfg.Server.GRPCAddr, grpc.WithInsecure())
 	defer grpcConn.Close()
@@ -37,9 +42,10 @@ func main() {
 		l.Fatal(err)
 	}
 
-	r := repository.New(db)
-	s := services.New(r, grpcConn, cfg)
-	h := handlers.New(s)
+	db := postgres.GetDB()
+	redisDB := redis.GetDB()
+	r := repository.New(db, redisDB)
+	h := handlers.New(r, grpcConn, cfg)
 
 	srv := server.New(cfg, h.InitRoutes())
 

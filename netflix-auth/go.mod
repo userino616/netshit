@@ -21,9 +21,12 @@ require (
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200108200545-475eaeb16496 // indirect
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/go-pg/zerochecker v0.2.0 // indirect
+	github.com/go-redis/redis/v8 v8.11.4 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect

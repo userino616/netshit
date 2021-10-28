@@ -11,17 +11,18 @@ type JWT struct {
 	Token string `json:"accessToken"`
 }
 
-type tokenClaims struct {
+type TokenClaims struct {
 	jwt.StandardClaims
 	UserID uuid.UUID `json:"userId"`
 }
 
-func newTokenClaims(userId uuid.UUID, tokenExp time.Duration) *tokenClaims {
-	return &tokenClaims{
+func newTokenClaims(userID uuid.UUID, tokenExp time.Duration) *TokenClaims {
+	return &TokenClaims{
 		jwt.StandardClaims{
+			Id: uuid.New().String(),
 			ExpiresAt: time.Now().Add(tokenExp).Unix(),
 			IssuedAt:  time.Now().Unix(),
 		},
-		userId,
+		userID,
 	}
 }

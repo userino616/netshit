@@ -1,73 +1,48 @@
-package authentication
+package auth
 
 import (
-	"errors"
-	"github.com/go-pg/pg/v10"
-	"net/http"
 	"netflix-auth/internal/models"
-	"netflix-auth/internal/repository/users"
-	"netflix-auth/pkg/jwt"
-	"netflix-auth/pkg/passwords"
-
-	"github.com/google/uuid"
-
+	"netflix-auth/internal/services/users"
+	"netflix-auth/pkg/hash"
 	httperror "netflix-auth/pkg/http_error"
+	"netflix-auth/pkg/jwt"
+	"time"
 )
 
-type AuthService interface {
+type contextKey string
+
+const (
+	UserIDKey      contextKey = "userID"
+	TokenClaimsKey contextKey = "tokenClaims"
+)
+
+type Service interface {
 	Authenticate(data models.User) (*jwt.JWT, httperror.HTTPError)
-	Middleware(next http.Handler) http.Handler
-	GetUserByEmail(email string) (*models.User, httperror.HTTPError)
-	GetUserByID(id uuid.UUID) (*models.User, httperror.HTTPError)
+	LogOut(token string, exp int64) httperror.HTTPError
 }
 
 type authService struct {
-	userRepo        users.UserRepository
-	jwtService      jwt.Service
-	passwordService passwords.Service
+	userService users.Service
+	jwtService  jwt.Service
+	hashService hash.Service
 }
 
-func NewAuthService(r users.UserRepository, js jwt.Service, ps passwords.Service) AuthService {
+func NewAuthService(us users.Service, js jwt.Service, hs hash.Service) Service {
 	return &authService{
-		userRepo:        r,
-		jwtService:      js,
-		passwordService: ps,
+		userService: us,
+		jwtService:  js,
+		hashService: hs,
 	}
-}
-
-func (s authService) GetUserByID(id uuid.UUID) (*models.User, httperror.HTTPError) {
-	user, err := s.userRepo.GetByID(id)
-	if err != nil {
-		if errors.Is(err, pg.ErrNoRows) {
-			return nil, httperror.NewNotFoundErr(err, "user not found")
-		}
-		return nil, httperror.NewInternalServerErr(err)
-	}
-
-	return &user, nil
-}
-
-func (s authService) GetUserByEmail(email string) (*models.User, httperror.HTTPError) {
-	user, err := s.userRepo.GetByEmail(email)
-	if err != nil {
-		if errors.Is(err, pg.ErrNoRows) {
-			return nil, httperror.NewNotFoundErr(err, "user not found")
-		}
-		return nil, httperror.NewInternalServerErr(err)
-	}
-
-	return &user, nil
 }
 
 func (s authService) Authenticate(data models.User) (*jwt.JWT, httperror.HTTPError) {
-	user, err := s.GetUserByEmail(data.Email)
+	user, err := s.userService.GetByEmail(data.Email)
 	if err != nil {
-		// TODO check if error is NoRowsAffected
 		return nil, httperror.NewBadRequestErr(ErrUserNotFound, ErrUserNotFound.Error())
 	}
 
-	err = s.passwordService.CompareHash(user.Password, data.Password)
-	if err != nil {
+	passwordIsEqual := s.hashService.IsEqual(user.Password, data.Password)
+	if !passwordIsEqual {
 		return nil, httperror.NewBadRequestErr(ErrUserWrongPassword, ErrUserWrongPassword.Error())
 	}
 
@@ -77,4 +52,10 @@ func (s authService) Authenticate(data models.User) (*jwt.JWT, httperror.HTTPErr
 	}
 
 	return &jwt.JWT{Token: token}, nil
+}
+
+func (s authService) LogOut(token string, exp int64) httperror.HTTPError {
+	expTime := time.Unix(exp, 0)
+	timeLeft := expTime.Sub(time.Now())
+	return s.jwtService.AddToBlackList(token, timeLeft)
 }

@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  netflix_movies:
+    container_name: netflix_movies
+    restart: always
+    build: .
+    ports:
+      - "8085:8085"
+    depends_on:
+      - netflix_movies_postgres
+    networks:
+      - netflix
+    environment:
+      DB_HOST: "netflix_movies_postgres"
+      DB_NAME: "netflix_movies"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "qwerty"
+
+      SERVER_ADDR: ":8085"
+      LOG_LEVEL: 6
+
+  netflix_movies_postgres:
+    container_name: netflix_movies_postgres
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ./.database/postgres/data:/var/lib/postgresql/data
+    networks:
+      - netflix
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "qwerty"
+      POSTGRES_DB: "netflix_movies"
+    ports:
+      - "5477:5432"
+
+networks:
+  netflix:
+    external: true

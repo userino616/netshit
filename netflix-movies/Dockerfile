@@ -7,13 +7,16 @@ RUN make clear build
 
 # image for running application
 FROM alpine:latest
-ENV DB_HOST="netflix_postgres"
-ENV DB_NAME="netflix"
+ENV DB_HOST="netflix_users_postgres"
+ENV DB_NAME="netflix_users"
 ENV DB_PORT=5432
 ENV DB_USER=postgres
 ENV DB_PASSWORD="qwerty"
+
+ENV SERVER_ADDR=":8085"
+ENV LOG_LEVEL=6
+
 WORKDIR /app
-COPY config.yml .
 COPY --from=builder ./src/bin .
 EXPOSE 8085
 ENTRYPOINT ["./main"]

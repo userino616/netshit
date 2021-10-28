@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"netflix-movies/internal/config"
 	"netflix-movies/internal/controller"
 	"netflix-movies/internal/repository"
@@ -15,14 +16,15 @@ import (
 )
 
 func main() {
-	logger.Init()
+	godotenv.Load()
+	cfg := config.GetConfig()
+
+	logger.Init(cfg.LogLvl)
 	l := logger.GetLogger()
-	defer logger.Close()
 	l.Info("logger initialized")
 
-	cfg := config.GetConfig()
-	l.Info("config initialized")
 	l.Debugf("config data: %v", cfg)
+
 
 	postgres.Load(cfg)
 	db := postgres.GetDB()

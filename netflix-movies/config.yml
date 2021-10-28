@@ -1,9 +1,0 @@
-db:
-  host: netflix_postgres
-  name: netflix
-  port: 5432
-  user: postgres
-  password: qwerty
-
-server:
-  addr: :8085

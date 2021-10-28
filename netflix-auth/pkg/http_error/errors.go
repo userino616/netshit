@@ -3,6 +3,7 @@ package httperror
 import (
 	"errors"
 	"net/http"
+
 	"netflix-auth/pkg/logger"
 )
 
@@ -55,6 +56,7 @@ func NewBadRequestErr(err error, msg string) HTTPError {
 func NewInternalServerErr(err error) HTTPError {
 	l := logger.GetLogger()
 	l.Error(err)
+
 	return NewHTTPErrorWrapper(http.StatusInternalServerError, err, InternalServerError)
 }
 

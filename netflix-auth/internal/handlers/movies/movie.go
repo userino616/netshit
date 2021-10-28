@@ -1,26 +1,35 @@
-package handlers
+package movies
 
 import (
 	"net/http"
-	"netflix-auth/pkg/response"
-	"netflix-auth/pkg/utils"
 
 	"github.com/gorilla/mux"
 	"github.com/userino616/netflix-grpc/movieservice"
+	"netflix-auth/internal/services/movies"
+	"netflix-auth/pkg/response"
+	"netflix-auth/pkg/utils"
 )
 
-func (h *Handler) Search(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	service movies.Service
+}
+
+func NewHandler(ms movies.Service) Handler {
+	return Handler{ms}
+}
+
+func (h Handler) Search(w http.ResponseWriter, r *http.Request) {
 	movieName := mux.Vars(r)["name"]
-	movies, err := h.services.Movie.Search(&movieservice.SearchMovieRequest{Name: movieName})
+	moviesList, err := h.service.Search(&movieservice.SearchMovieRequest{Name: movieName})
 	if err != nil {
 		response.SendErrorResponse(w, err)
 
 		return
 	}
-	response.SendJSONResponse(w, movies)
+	response.SendJSONResponse(w, moviesList)
 }
 
-func (h *Handler) AddBookmark(w http.ResponseWriter, r *http.Request) {
+func (h Handler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 	userID, err := utils.GetUserID(r)
 	if err != nil {
 		response.SendErrorResponse(w, err)
@@ -37,7 +46,7 @@ func (h *Handler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 		UserId:  userID.String(),
 		MovieId: movieID.String(),
 	}
-	err = h.services.Movie.AddBookmark(bookmark)
+	err = h.service.AddBookmark(bookmark)
 	if err != nil {
 		response.SendErrorResponse(w, err)
 
@@ -47,7 +56,7 @@ func (h *Handler) AddBookmark(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) AddToWatchedList(w http.ResponseWriter, r *http.Request) {
+func (h Handler) AddToWatchedList(w http.ResponseWriter, r *http.Request) {
 	userID, err := utils.GetUserID(r)
 	if err != nil {
 		response.SendErrorResponse(w, err)
@@ -65,41 +74,45 @@ func (h *Handler) AddToWatchedList(w http.ResponseWriter, r *http.Request) {
 		UserId:  userID.String(),
 		MovieId: movieID.String(),
 	}
-	err = h.services.Movie.AddToWatchedList(watchedMovie)
+	err = h.service.AddToWatchedList(watchedMovie)
 	if err != nil {
 		response.SendErrorResponse(w, err)
+
+		return
 	}
 
 	w.WriteHeader(http.StatusOK)
 }
 
-func (h *Handler) GetUserWatchedList(w http.ResponseWriter, r *http.Request) {
+func (h Handler) GetUserWatchedList(w http.ResponseWriter, r *http.Request) {
 	userID, err := utils.GetUserID(r)
 	if err != nil {
 		response.SendErrorResponse(w, err)
 
 		return
 	}
-	movies, err := h.services.Movie.GetWatchedList(userID)
+	moviesList, err := h.service.GetWatchedList(userID)
 	if err != nil {
 		response.SendErrorResponse(w, err)
+
+		return
 	}
-	response.SendJSONResponse(w, movies)
+	response.SendJSONResponse(w, moviesList)
 }
 
-func (h *Handler) GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
+func (h Handler) GetUserBookmarks(w http.ResponseWriter, r *http.Request) {
 	userID, err := utils.GetUserID(r)
 	if err != nil {
 		response.SendErrorResponse(w, err)
 
 		return
 	}
-	movies, err := h.services.Movie.GetBookmarks(userID)
+	moviesList, err := h.service.GetBookmarks(userID)
 	if err != nil {
 		response.SendErrorResponse(w, err)
 
 		return
 	}
 
-	response.SendJSONResponse(w, movies)
+	response.SendJSONResponse(w, moviesList)
 }

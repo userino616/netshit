@@ -2,7 +2,6 @@ package movies
 
 import (
 	"context"
-	"netflix-auth/internal/config"
 	"time"
 
 	"github.com/google/uuid"
@@ -10,23 +9,23 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
+	"netflix-auth/internal/config"
 	httperror "netflix-auth/pkg/http_error"
 )
 
-type MovieService struct {
+type Service struct {
 	grpcClient movieservice.MovieServiceClient
 	timeOut    time.Duration
 }
 
-func NewMovieClient(conn grpc.ClientConnInterface, cfg *config.Config) MovieService {
-	return MovieService{
+func NewMovieService(conn *grpc.ClientConn, cfg *config.Config) Service {
+	return Service{
 		grpcClient: movieservice.NewMovieServiceClient(conn),
 		timeOut:    time.Duration(cfg.Server.GRPCTimeout) * time.Second,
 	}
 }
 
-func (s MovieService) Search(
+func (s Service) Search(
 	req *movieservice.SearchMovieRequest,
 ) (*movieservice.MovieListResponse, httperror.HTTPError) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), s.timeOut)
@@ -41,7 +40,7 @@ func (s MovieService) Search(
 	return res, nil
 }
 
-func (s MovieService) AddBookmark(
+func (s Service) AddBookmark(
 	bookmark *movieservice.AddBookmarkRequest,
 ) httperror.HTTPError {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), s.timeOut)
@@ -64,7 +63,7 @@ func (s MovieService) AddBookmark(
 	return nil
 }
 
-func (s MovieService) AddToWatchedList(
+func (s Service) AddToWatchedList(
 	watchedMovie *movieservice.AddToWatchedListRequest,
 ) httperror.HTTPError {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), s.timeOut)
@@ -87,7 +86,7 @@ func (s MovieService) AddToWatchedList(
 	return nil
 }
 
-func (s MovieService) GetWatchedList(
+func (s Service) GetWatchedList(
 	userID uuid.UUID,
 ) (*movieservice.MovieListResponse, httperror.HTTPError) {
 	req := &movieservice.UserIDRequest{Id: userID.String()}
@@ -104,7 +103,7 @@ func (s MovieService) GetWatchedList(
 	return res, nil
 }
 
-func (s MovieService) GetBookmarks(
+func (s Service) GetBookmarks(
 	userID uuid.UUID,
 ) (*movieservice.MovieListResponse, httperror.HTTPError) {
 	req := &movieservice.UserIDRequest{Id: userID.String()}

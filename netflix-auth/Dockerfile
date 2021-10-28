@@ -8,7 +8,6 @@ RUN make clear build
 # image for running application
 FROM alpine:latest
 WORKDIR /app
-COPY config.yml .
 COPY --from=builder ./src/bin .
 EXPOSE 8000
 ENTRYPOINT ["./main"]

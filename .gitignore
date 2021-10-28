@@ -1,8 +1,12 @@
+.gitignore
+.idea
 **/.DS_Store
 netflix-auth/.idea
 netflix-auth/.database
-netflix-auth/logs
+netflix-auth/.env
+netflix-auth/bin
 
 netflix-movies/.idea
+netflix-movies/.database
 netflix-movies/.env
-netflix-movies/logs
+netflix-movies/bin

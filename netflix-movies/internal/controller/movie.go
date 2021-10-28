@@ -2,14 +2,13 @@ package controller
 
 import (
 	"context"
-	"netflix-movies/internal/models"
-	"netflix-movies/internal/services/movies"
-	"netflix-movies/pkg/postgres"
-
 	"github.com/google/uuid"
 	"github.com/userino616/netflix-grpc/movieservice"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"netflix-movies/internal/models"
+	"netflix-movies/internal/services/movies"
+	"netflix-movies/pkg/postgres"
 )
 
 type MovieController struct {
@@ -27,12 +26,17 @@ func (ctrl *MovieController) Search(
 	ctx context.Context,
 	req *movieservice.SearchMovieRequest,
 ) (*movieservice.MovieListResponse, error) {
-	movies, err := ctrl.service.Search(req.Name)
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
+	moviesList, err := ctrl.service.Search(req.Name)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 	res := &movieservice.MovieListResponse{}
-	for _, movie := range movies {
+	for _, movie := range moviesList {
 		res.Movies = append(res.Movies, marshalMovie(&movie))
 	}
 
@@ -43,17 +47,22 @@ func (ctrl *MovieController) GetWatchedList(
 	ctx context.Context,
 	req *movieservice.UserIDRequest,
 ) (*movieservice.MovieListResponse, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 	uid, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	movies, err := ctrl.service.GetWatchedList(uid)
+	moviesList, err := ctrl.service.GetWatchedList(uid)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	res := &movieservice.MovieListResponse{}
-	for _, movie := range movies {
+	for _, movie := range moviesList {
 		res.Movies = append(res.Movies, marshalMovie(&movie))
 	}
 
@@ -63,17 +72,22 @@ func (ctrl *MovieController) GetWatchedList(
 func (ctrl *MovieController) GetBookmarks(ctx context.Context,
 	req *movieservice.UserIDRequest,
 ) (*movieservice.MovieListResponse, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 	uid, err := uuid.Parse(req.Id)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
-	movies, err := ctrl.service.GetBookmarks(uid)
+	moviesList, err := ctrl.service.GetBookmarks(uid)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
 
 	res := &movieservice.MovieListResponse{}
-	for _, movie := range movies {
+	for _, movie := range moviesList {
 		res.Movies = append(res.Movies, marshalMovie(&movie))
 	}
 
@@ -81,9 +95,14 @@ func (ctrl *MovieController) GetBookmarks(ctx context.Context,
 }
 
 func (ctrl *MovieController) AddBookmark(
-	ctr context.Context,
+	ctx context.Context,
 	req *movieservice.AddBookmarkRequest,
 ) (*movieservice.Empty, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 	res := &movieservice.Empty{}
 
 	bookmark, err := unmarshalMovieBookmark(req)
@@ -108,6 +127,11 @@ func (ctrl *MovieController) AddToWatchedList(
 	ctx context.Context,
 	req *movieservice.AddToWatchedListRequest,
 ) (*movieservice.Empty, error) {
+	select {
+	case <-ctx.Done():
+		return nil, ctx.Err()
+	default:
+	}
 	res := &movieservice.Empty{}
 
 	watchedMovie, err := unmarshalWatchedMovie(req)

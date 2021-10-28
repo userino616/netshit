@@ -4,11 +4,11 @@ import "netflix-auth/internal/config"
 
 var CFG = &config.Config{
 	DB: struct {
-		Host     string `yaml:"host" env-required:"true"`
-		Name     string `yaml:"name" env-required:"true"`
-		Port     string `yaml:"port" env-required:"true"`
-		User     string `yaml:"user" env-required:"true"`
-		Password string `yaml:"password" env-required:"true"`
+		Host     string `env:"DB_HOST" env-required:"true"`
+		Name     string `env:"DB_NAME" env-required:"true"`
+		Port     string `env:"DB_PORT" env-required:"true"`
+		User     string `env:"DB_USER" env-required:"true"`
+		Password string `env:"DB_PASSWORD" env-required:"true"`
 	}{
 		Host:     "localhost",
 		Name:     "netflix_test",

@@ -2,46 +2,75 @@ package handlers
 
 import (
 	"net/http"
-	"netflix-auth/internal/services"
-	"netflix-auth/pkg/utils"
 
-	"github.com/gorilla/mux"
+	"github.com/justinas/alice"
+	"google.golang.org/grpc"
+	"netflix-auth/internal/config"
+	"netflix-auth/internal/handlers/auth"
+	"netflix-auth/internal/handlers/movies"
+	"netflix-auth/internal/handlers/users"
+	"netflix-auth/internal/middlewares"
+	"netflix-auth/internal/repository"
+	authService "netflix-auth/internal/services/auth"
+	moviesService "netflix-auth/internal/services/movies"
+	userService "netflix-auth/internal/services/users"
+	"netflix-auth/pkg/hash"
+	"netflix-auth/pkg/jwt"
 )
 
+const version1 = "/v1"
+
 type Handler struct {
-	services *services.Service
+	js jwt.Service
+	us userService.Service
+
+	user  users.Handler
+	auth  auth.Handler
+	movie movies.Handler
 }
 
-func New(s *services.Service) *Handler {
-	return &Handler{services: s}
+func New(repos *repository.Repository, conn *grpc.ClientConn, cfg *config.Config) *Handler {
+	js := jwt.NewJWTService(cfg, repos.MemStore)
+	hs := hash.NewHashService(cfg)
+	us := userService.NewUserService(repos.User, hs)
+
+	as := authService.NewAuthService(us, js, hs)
+	ms := moviesService.NewMovieService(conn, cfg)
+
+	return &Handler{
+		js: js,
+		us: us,
+
+		user:  users.NewHandler(us),
+		auth:  auth.NewHandler(as),
+		movie: movies.NewHandler(ms),
+	}
 }
 
-func (h Handler) InitRoutes() *mux.Router {
-	router := mux.NewRouter()
-	router = router.PathPrefix("/v1").Subrouter()
+func (h *Handler) InitRoutes() *router {
+	var (
+		r              = newRouter()
+		v1             = r.subRouter(version1)
+		authMiddleware = middlewares.NewAuth(h.js, h.us)
 
-	users := router.PathPrefix("/users").Subrouter()
-	usersAuth := router.PathPrefix("/users").Subrouter()
-	usersAuth.Use(h.services.Auth.Middleware)
+		pubChain                 = alice.New(middlewares.PanicRecoveryMiddleware)
+		authChain                = pubChain.Append(authMiddleware.WithUserID)
+		authChainWithTokenClaims = pubChain.Append(authMiddleware.WithTokenClaims)
 
-	{
-		users.HandleFunc("/create", h.CreateUser).Methods(http.MethodPost)
-		users.HandleFunc("/auth", h.Auth).Methods(http.MethodPost)
-		usersAuth.HandleFunc("/watched", h.GetUserWatchedList).Methods(http.MethodGet)
-		usersAuth.HandleFunc("/bookmarks", h.GetUserBookmarks).Methods(http.MethodGet)
-	}
+		usersRouter              = v1.subRouter("/users")
+		moviesRouter             = v1.subRouter("/movies")
+	)
 
-	movies := router.PathPrefix("/movies").Subrouter()
-	moviesAuth := router.PathPrefix("/movies").Subrouter()
-	moviesAuth.Use(h.services.Auth.Middleware)
+	usersRouter.chain(pubChain).handle("/create", h.user.Create, http.MethodPost)
+	usersRouter.chain(pubChain).handle("/auth", h.auth.Auth, http.MethodPost)
+	usersRouter.chain(authChainWithTokenClaims).handle("/logout", h.auth.LogOut, http.MethodPost)
 
-	{
-		movies.Path("/search/{name}").HandlerFunc(h.Search).Methods(http.MethodGet)
-		moviesAuth.HandleFunc("/{id}/add-bookmark", h.AddBookmark).Methods(http.MethodPost)
-		moviesAuth.HandleFunc("/{id}/add-to-watch-list", h.AddToWatchedList).Methods(http.MethodPost)
-	}
+	usersRouter.chain(authChain).handle("/watched", h.movie.GetUserWatchedList, http.MethodGet)
+	usersRouter.chain(authChain).handle("/bookmarks", h.movie.GetUserBookmarks, http.MethodGet)
 
-	router.Use(utils.PanicRecoveryMiddleware)
+	moviesRouter.chain(pubChain).handle("/search/{name}", h.movie.Search, http.MethodGet)
+	moviesRouter.chain(authChain).handle("/{id}/add-bookmark", h.movie.AddBookmark, http.MethodPost)
+	moviesRouter.chain(authChain).handle("/{id}/add-to-watch-list", h.movie.AddToWatchedList, http.MethodPost)
 
-	return router
+	return r
 }
